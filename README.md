@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 💖 Cute Date Invitation
 
-## Getting Started
+A soft, pastel, kawaii-style web app that guides someone through a romantic date
+invitation in 5 playful steps. Mobile-first, wholesome, and full of floating
+hearts and sparkles.
 
-First, run the development server:
+Built from the spec in [`docs/project.md`](docs/project.md).
+
+## ✨ The flow
+
+1. **Opening** – a bunny mascot teases the big question.
+2. **The Question** – "Would you like to go on a date with me? 🥺💖" with a
+   giant **YES** and a **NO** button that dodges away (and grows the YES button!).
+3. **Choose Activity** – a 2-column grid of date ideas with bounce + checkmark.
+4. **Choose Location** – an illustrated map with tappable pins and star ratings.
+5. **Final Confirmation** – confetti, a couple illustration, a date summary, plus
+   **Save Our Date** (downloads an `.ics` calendar file) and **Share This Moment**
+   (Web Share API / clipboard fallback).
+
+## 🧱 Tech stack
+
+- **Next.js 16** (App Router)
+- **Tailwind CSS v4**
+- **Framer Motion** for transitions & animations
+- Custom SVG icons & illustrations
+- Rounded fonts: **Baloo 2** (display) + **Nunito** (body)
+- No backend — pure React state
+
+## 🚀 Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) on a phone-sized viewport for
+the best experience.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 📦 Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` – start the dev server
+- `npm run build` – production build
+- `npm run start` – run the production build
+- `npm run lint` – lint
 
-## Learn More
+## ♿ Accessibility
 
-To learn more about Next.js, take a look at the following resources:
+- AA-friendly contrast, 44px+ tap targets, icons paired with labels
+- Respects `prefers-reduced-motion`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 💗 Success criteria
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> If the user smiles or says "aww 🥹", the app is successful.
