@@ -1,150 +1,263 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import Couple from "../Couple";
+import { PartyPopper, Building2, CalendarHeart } from "lucide-react";
 import Button from "../Button";
-import { Confetti, Sparkles } from "../Decor";
-import { SaveIcon, ShareIcon } from "../icons";
+import { Confetti, Sparkles, FloatingHearts } from "../Decor";
+import { SaveIcon, PinIcon, UtensilsIcon, ClockIcon, HeartIcon } from "../icons";
+import { IconBadge } from "../GradientIcon";
+import { formatDateLabel } from "./StepDateTime";
 
-function buildICS({ activityLabel, locationLabel }) {
-  const start = new Date();
-  start.setDate(start.getDate() + 7);
-  start.setHours(19, 0, 0, 0);
+function resolveStart(date, time) {
+  if (date && time) {
+    const [y, m, d] = date.split("-").map(Number);
+    const [hh, mm] = time.split(":").map(Number);
+    return new Date(y, m - 1, d, hh, mm, 0, 0);
+  }
+  const fallback = new Date();
+  fallback.setDate(fallback.getDate() + 7);
+  fallback.setHours(19, 0, 0, 0);
+  return fallback;
+}
+
+function buildICS({ activityLabel, locationLabel, date, time }) {
+  const start = resolveStart(date, time);
   const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
   const fmt = (d) =>
     d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Cute Date//EN",
+    "PRODID:-//Cute Date//ID",
     "BEGIN:VEVENT",
     `UID:${Date.now()}@cute-date`,
     `DTSTAMP:${fmt(new Date())}`,
     `DTSTART:${fmt(start)}`,
     `DTEND:${fmt(end)}`,
-    `SUMMARY:Our Date - ${activityLabel} 💖`,
+    `SUMMARY:Kencan Kita - ${activityLabel}`,
     `LOCATION:${locationLabel}`,
-    `DESCRIPTION:${activityLabel} at ${locationLabel}. Can't wait! ✨`,
+    `DESCRIPTION:${activityLabel} di ${locationLabel}. Tidak sabar!`,
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n");
 }
 
-export default function StepFinal({ activity, location, onRestart }) {
-  const [toast, setToast] = useState(null);
+function CalendarDecor({ className = "" }) {
+  return (
+    <svg
+      viewBox="0 0 40 44"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="4" y="8" width="32" height="32" rx="7" fill="#ff8fbf" />
+      <rect x="6" y="14" width="28" height="24" rx="5" fill="#fff5f9" />
+      <rect x="10" y="4" width="5" height="10" rx="2.5" fill="#ff5ba0" />
+      <rect x="25" y="4" width="5" height="10" rx="2.5" fill="#ff5ba0" />
+      <path
+        d="M20 22.2c-.9-1.4-2.7-1.8-3.9-.8-1.2 1-.9 2.7.4 3.8L20 28.2l3.5-3c1.3-1.1 1.6-2.8.4-3.8-1.2-1-3-0.6-3.9.8z"
+        fill="#ff5ba0"
+      />
+    </svg>
+  );
+}
 
-  function flash(msg) {
-    setToast(msg);
+function SummaryRow({ icon, label, value, decoration }) {
+  return (
+    <div className="flex items-center gap-3.5 py-3.5 first:pt-1 last:pb-1">
+      <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[linear-gradient(160deg,#ff9bc8_0%,#ff5ba0_60%,#f03d8a_100%)] text-white shadow-[0_6px_16px_-4px_rgba(255,91,160,0.55),inset_0_1px_0_rgba(255,255,255,0.55)]">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-1.5 top-1 h-1/3 rounded-full bg-white/35 blur-[1px]"
+        />
+        <span className="relative">{icon}</span>
+      </span>
+      <div className="min-w-0 flex-1 text-left">
+        <p className="text-[0.72rem] font-semibold text-[#b08aa0]">{label}</p>
+        <p className="mt-0.5 text-[0.95rem] font-extrabold leading-snug text-[#5c2d4a]">
+          {value}
+        </p>
+      </div>
+      {decoration ? (
+        <div className="flex shrink-0 items-center justify-center">{decoration}</div>
+      ) : null}
+    </div>
+  );
+}
+
+export default function StepFinal({ activity, location, date, time, onRestart }) {
+  const [toast, setToast] = useState(null);
+  const dateLabel = formatDateLabel(date);
+
+  function flash(message, icon) {
+    setToast({ message, icon });
     setTimeout(() => setToast(null), 2200);
   }
 
   function handleSave() {
     const ics = buildICS({
-      activityLabel: activity?.label ?? "Date",
-      locationLabel: location?.label ?? "",
+      activityLabel: activity?.label ?? "Kencan",
+      locationLabel: location?.placeName ?? location?.label ?? "",
+      date,
+      time,
     });
     const blob = new Blob([ics], { type: "text/calendar" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "our-date.ics";
+    a.download = "kencan-kita.ics";
     a.click();
     URL.revokeObjectURL(url);
-    flash("Saved to your calendar! 📅");
+    flash("Tersimpan ke kalender!", CalendarHeart);
   }
 
-  async function handleShare() {
-    const text = `It's a date! ${activity?.emoji ?? ""} ${activity?.label ?? ""} at ${
-      location?.label ?? ""
-    } ${location?.emoji ?? ""} 💖`;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "It's a Date! 💖", text });
-      } else {
-        await navigator.clipboard.writeText(text);
-        flash("Copied to clipboard! 💌");
-      }
-    } catch {
-      flash("Sharing cancelled 🙈");
-    }
-  }
+  const whenValue =
+    dateLabel || time
+      ? `${dateLabel}${dateLabel && time ? " • " : ""}${time ?? ""}`
+      : "—";
+
+  const ActivityIcon = activity?.Icon;
+  const activityValue = activity ? (
+    <span className="inline-flex items-center gap-1.5">
+      {ActivityIcon && (
+        <ActivityIcon className="h-4 w-4 shrink-0 text-pink-400" strokeWidth={2.4} />
+      )}
+      {activity.label}
+    </span>
+  ) : (
+    "—"
+  );
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-between px-6 py-10 text-center">
-      <Confetti count={90} />
-      <Sparkles count={14} />
+    <div className="relative flex h-full w-full flex-col items-center justify-start px-5 pb-8 pt-16 text-center">
+      <Image
+        src="/images/background/bg2.png"
+        alt=""
+        fill
+        className="object-cover object-center"
+        sizes="420px"
+      />
+      <Confetti count={70} />
+      <Sparkles count={12} />
+      <FloatingHearts count={8} />
 
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative z-10"
+      <motion.header
+        initial={{ opacity: 0, y: -14, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 18 }}
+        className="relative z-10 text-center mt-24"
       >
-        <h1 className="font-display text-4xl font-extrabold text-pink-500">
-          YAYYY! 🎉
+        <h1 className="font-serif text-[1.85rem] font-semibold leading-tight tracking-tight text-ink">
+          Yeay, kita{" "}
+          <motion.em
+            animate={{ scale: [1, 1.06, 1] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+            className="inline-block font-serif italic font-medium text-pink-500"
+          >
+            fix
+          </motion.em>{" "}
+          kencan!
         </h1>
-        <p className="font-display text-2xl font-extrabold text-ink">
-          It&apos;s a Date! 💖
-        </p>
-      </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scaleX: 0.6 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ delay: 0.2, duration: 0.45 }}
+          className="mt-2.5 mb-2 flex items-center justify-center gap-2.5"
+          aria-hidden="true"
+        >
+          <span className="h-px w-10 bg-pink-300/80" />
+          <motion.span
+            animate={{ scale: [1, 1.25, 1] }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <HeartIcon className="h-3 w-3 text-pink-400" />
+          </motion.span>
+          <span className="h-px w-10 bg-pink-300/80" />
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="text-sm font-semibold text-ink-soft"
+        >
+          Tinggal cus pas harinya, gak usah ribet mikir.
+        </motion.p>
+      </motion.header>
 
       <motion.div
-        initial={{ scale: 0.6, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 130, damping: 11 }}
-        className="relative z-10 animate-floaty drop-shadow-[0_18px_24px_rgba(255,122,178,0.35)]"
-      >
-        <Couple className="h-44 w-64" />
-      </motion.div>
-
-      {/* Summary */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
-        className="relative z-10 w-full max-w-xs space-y-3 rounded-3xl border-2 border-white/80 bg-white/70 p-4 backdrop-blur"
+        transition={{ delay: 0.15, type: "spring", stiffness: 220, damping: 18 }}
+        className="relative z-10 w-full max-w-sm overflow-hidden rounded-[1.75rem] border border-white/60 bg-white/25 px-5 py-5 shadow-[0_18px_40px_-16px_rgba(255,91,160,0.35)] backdrop-blur-xl backdrop-saturate-150 mt-16"
       >
-        <div className="flex items-center justify-between gap-3 rounded-2xl bg-pink-50 px-4 py-3">
-          <span className="text-sm font-bold text-ink-soft">Activity</span>
-          <span className="font-display font-bold text-ink">
-            {activity?.emoji} {activity?.label}
-          </span>
-        </div>
-        <div className="flex items-center justify-between gap-3 rounded-2xl bg-pink-50 px-4 py-3">
-          <span className="text-sm font-bold text-ink-soft">Location</span>
-          <span className="font-display font-bold text-ink">
-            {location?.emoji} {location?.label}
-          </span>
+        <div className="divide-y divide-white/40">
+          <SummaryRow
+            icon={<UtensilsIcon className="h-5 w-5" />}
+            label="Aktivitas"
+            value={activityValue}
+            decoration={
+              <span className="flex items-center -space-x-1 text-pink-400">
+                <HeartIcon className="h-5 w-5 drop-shadow-sm" />
+                <HeartIcon className="h-4 w-4 translate-y-0.5 opacity-90" />
+              </span>
+            }
+          />
+          <SummaryRow
+            icon={<PinIcon className="h-5 w-5" />}
+            label="Lokasi"
+            value={location?.placeName ?? location?.label ?? "—"}
+            decoration={
+              location?.img ? (
+                <Image
+                  src={location.img}
+                  alt=""
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 object-contain drop-shadow-sm"
+                />
+              ) : (
+                <IconBadge
+                  icon={Building2}
+                  gradient="purple"
+                  className="h-11 w-11"
+                  iconClassName="h-5 w-5"
+                />
+              )
+            }
+          />
+          <SummaryRow
+            icon={<ClockIcon className="h-5 w-5" />}
+            label="Waktu"
+            value={whenValue}
+            decoration={<CalendarDecor className="h-11 w-10 drop-shadow-sm" />}
+          />
         </div>
       </motion.div>
 
-      <div className="relative z-10 w-full max-w-xs space-y-3">
+      <div className="relative z-10 mt-auto w-full max-w-sm space-y-2">
         <Button onClick={handleSave} className="w-full">
           <SaveIcon className="h-5 w-5" />
-          Save Our Date
-        </Button>
-        <Button onClick={handleShare} variant="secondary" className="w-full">
-          <ShareIcon className="h-5 w-5" />
-          Share This Moment
+          Catet di Kalender
         </Button>
         <button
           onClick={onRestart}
-          className="w-full pt-1 text-sm font-bold text-ink-soft underline-offset-4 hover:underline"
+          className="w-full pt-1 text-xs font-semibold text-ink-soft/70 underline-offset-4 hover:underline"
         >
-          start over 🔁
+          mulai ulang
         </button>
-        <p className="pt-1 font-display text-base font-bold text-pink-400">
-          Can&apos;t wait! See you soon ✨
-        </p>
       </div>
 
       {toast && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-white shadow-lg"
+          className="fixed bottom-6 left-1/2 z-60 flex -translate-x-1/2 items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-white shadow-lg"
         >
-          {toast}
+          {toast.icon && <toast.icon className="h-4 w-4 shrink-0" strokeWidth={2.4} aria-hidden="true" />}
+          {toast.message}
         </motion.div>
       )}
     </div>

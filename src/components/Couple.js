@@ -4,7 +4,7 @@ export default function Couple({ className = "" }) {
       viewBox="0 0 260 200"
       className={className}
       role="img"
-      aria-label="A cute couple in love"
+      aria-label="Pasangan lucu yang sedang jatuh cinta"
     >
       <defs>
         <radialGradient id="cBody" cx="50%" cy="40%" r="70%">

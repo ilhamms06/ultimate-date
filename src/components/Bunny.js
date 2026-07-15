@@ -4,7 +4,7 @@ export default function Bunny({ className = "", mood = "happy" }) {
       viewBox="0 0 220 240"
       className={className}
       role="img"
-      aria-label="A cute bunny holding a heart"
+      aria-label="Kelinci lucu membawa hati"
     >
       <defs>
         <radialGradient id="bunnyBody" cx="50%" cy="40%" r="70%">

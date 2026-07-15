@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HeartIcon, SparkleIcon } from "./icons";
 
 function useClientItems(count, make) {
   const [items, setItems] = useState([]);
+  const makeRef = useRef(make);
+  makeRef.current = make;
+
   useEffect(() => {
-    setItems(Array.from({ length: count }, (_, i) => make(i)));
-  }, [count, make]);
+    setItems(Array.from({ length: count }, (_, i) => makeRef.current(i)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count]);
+
   return items;
 }
 

@@ -151,3 +151,43 @@ export function PinIcon({ className = "", ...props }) {
     </svg>
   );
 }
+
+export function UtensilsIcon({ className = "", ...props }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+      {...props}
+    >
+      <path d="M6 3v7a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3" />
+      <path d="M8 12v9" />
+      <path d="M16 3v9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2z" />
+      <path d="M16 12v9" />
+    </svg>
+  );
+}
+
+export function ClockIcon({ className = "", ...props }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+      {...props}
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}

@@ -1,4 +1,5 @@
-import { Nunito, Baloo_2 } from "next/font/google";
+import { Nunito, Baloo_2, Playfair_Display } from "next/font/google";
+import { IconGradientDefs } from "@/components/GradientIcon";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -13,9 +14,16 @@ const baloo = Baloo_2({
   weight: ["500", "600", "700", "800"],
 });
 
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+});
+
 export const metadata = {
-  title: "Will You Go On a Date With Me? 💖",
-  description: "A cute little invitation, just for you 🥺",
+  title: "Maukah Kamu Pergi Kencan Denganku?",
+  description: "Undangan kecil yang manis, khusus untukmu",
 };
 
 export const viewport = {
@@ -27,10 +35,13 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html
-      lang="en"
-      className={`${nunito.variable} ${baloo.variable} h-full antialiased`}
+      lang="id"
+      className={`${nunito.variable} ${baloo.variable} ${playfair.variable} h-full antialiased`}
     >
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        <IconGradientDefs />
+        {children}
+      </body>
     </html>
   );
 }
