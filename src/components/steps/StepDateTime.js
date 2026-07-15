@@ -2,60 +2,11 @@
 
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Sunrise,
-  UtensilsCrossed,
-  Sun,
-  Sunset,
-  Moon,
-  Sparkles as SparklesIcon,
-  CalendarHeart,
-  Heart as HeartIconLucide,
-} from "lucide-react";
+import { CalendarHeart, Heart as HeartIconLucide } from "lucide-react";
 import Button from "../Button";
 import { HeartIcon, ArrowRightIcon, CheckIcon } from "../icons";
 import { IconBadge } from "../GradientIcon";
-
-const TIME_SLOTS = [
-  { id: "10:00", label: "10:00", part: "Pagi", Icon: Sunrise },
-  { id: "13:00", label: "13:00", part: "Siang", Icon: UtensilsCrossed },
-  { id: "16:00", label: "16:00", part: "Sore", Icon: Sun },
-  { id: "18:00", label: "18:00", part: "Senja", Icon: Sunset },
-  { id: "19:30", label: "19:30", part: "Malam", Icon: Moon },
-  { id: "21:00", label: "21:00", part: "Larut malam", Icon: SparklesIcon },
-];
-
-const DAY_NAMES = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-const MONTH_NAMES = [
-  "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-  "Jul", "Agu", "Sep", "Okt", "Nov", "Des",
-];
-
-function buildDays(count = 7) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return Array.from({ length: count }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-      d.getDate()
-    ).padStart(2, "0")}`;
-    return {
-      value,
-      dayName: DAY_NAMES[d.getDay()],
-      dayNum: d.getDate(),
-      monthName: MONTH_NAMES[d.getMonth()],
-      isToday: i === 0,
-    };
-  });
-}
-
-export function formatDateLabel(value) {
-  if (!value) return "";
-  const [y, m, d] = value.split("-").map(Number);
-  const date = new Date(y, m - 1, d);
-  return `${DAY_NAMES[date.getDay()]}, ${d} ${MONTH_NAMES[m - 1]}`;
-}
+import { formatDateLabel } from "@/lib/dateConfig";
 
 function SectionLabel({ children }) {
   return (
@@ -251,13 +202,14 @@ function TimeCard({ slot, isActive, onSelect, index }) {
 }
 
 export default function StepDateTime({
+  days = [],
+  timeSlots = [],
   date,
   time,
   onDateChange,
   onTimeChange,
   onNext,
 }) {
-  const days = buildDays(7);
   const canContinue = Boolean(date && time);
   const summary =
     date && time
@@ -348,7 +300,7 @@ export default function StepDateTime({
         <section className="mb-4">
           <SectionLabel>Pilih waktu</SectionLabel>
           <div className="grid grid-cols-2 gap-2.5 px-0.5 pt-1">
-            {TIME_SLOTS.map((slot, i) => (
+            {timeSlots.map((slot, i) => (
               <TimeCard
                 key={slot.id}
                 slot={slot}

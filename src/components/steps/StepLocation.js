@@ -7,68 +7,6 @@ import Button from "../Button";
 import { CheckIcon, ArrowRightIcon, HeartIcon } from "../icons";
 import { GradientIcon, IconBadge } from "../GradientIcon";
 
-const PLACE_TYPES = {
-  cinema: {
-    label: "Bioskop",
-    img: "/images/icon/place-cinema.png",
-    tint: "from-pink-300/30 via-white/15 to-rose-200/10",
-  },
-  mall: {
-    label: "Mall",
-    img: "/images/icon/place-mall.png",
-    tint: "from-violet-300/30 via-white/15 to-fuchsia-200/10",
-  },
-};
-
-const ACTIVITY_LOCATIONS = {
-  dinner: [
-    { id: "blokm-plaza", placeName: "Blok M Plaza", type: "mall" },
-    { id: "pacific-place", placeName: "Pacific Place", type: "mall" },
-    { id: "grand-indonesia", placeName: "Grand Indonesia", type: "mall" },
-    { id: "pondok-indah", placeName: "Pondok Indah Mall", type: "mall" },
-  ],
-  movie: [
-    { id: "blokm-xxi", placeName: "Blok M XXI", type: "cinema" },
-    { id: "gi-xxi", placeName: "Grand Indonesia XXI", type: "cinema" },
-    { id: "pi-xxi", placeName: "Pondok Indah XXI", type: "cinema" },
-    { id: "fx-xxi", placeName: "FX Sudirman XXI", type: "cinema" },
-    { id: "kemang-xxi", placeName: "Kemang Village XXI", type: "cinema" },
-  ],
-  park: [
-    { id: "suropati", placeName: "Taman Suropati", type: "mall" },
-    { id: "gbk", placeName: "Taman GBK", type: "mall" },
-    { id: "menteng", placeName: "Taman Menteng", type: "mall" },
-    { id: "tebet", placeName: "Taman Tebet Eco Park", type: "mall" },
-  ],
-  gaming: [
-    { id: "blokm-plaza-gaming", placeName: "Blok M Plaza", type: "mall" },
-    { id: "kasablanka", placeName: "Kota Kasablanka", type: "mall" },
-    { id: "senayan-city", placeName: "Senayan City", type: "mall" },
-    { id: "central-park", placeName: "Central Park", type: "mall" },
-    { id: "lippo-puri", placeName: "Lippo Mall Puri", type: "mall" },
-  ],
-};
-
-export function getLocationsForActivity(activityId) {
-  const places = ACTIVITY_LOCATIONS[activityId] ?? [];
-
-  return places.map((place, index) => {
-    const typeInfo = PLACE_TYPES[place.type];
-    return {
-      ...place,
-      label: typeInfo.label,
-      img: typeInfo.img,
-      tint: typeInfo.tint,
-      col: index % 2 === 0 ? "left" : "right",
-      row: Math.floor(index / 2),
-    };
-  });
-}
-
-export function findLocation(activityId, locationId) {
-  return getLocationsForActivity(activityId).find((l) => l.id === locationId) ?? null;
-}
-
 function BurstHearts({ show }) {
   const particles = [
     { x: -16, y: -20, delay: 0, size: 0.7 },
@@ -208,8 +146,7 @@ function LocationCard({ location, isActive, onSelect, index }) {
   );
 }
 
-export default function StepLocation({ activityId, selected, onSelect, onNext }) {
-  const locations = getLocationsForActivity(activityId);
+export default function StepLocation({ locations = [], selected, onSelect, onNext }) {
   const leftCol = locations.filter((l) => l.col === "left");
   const rightCol = locations.filter((l) => l.col === "right");
 

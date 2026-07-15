@@ -8,7 +8,7 @@ import Button from "../Button";
 import { Confetti, Sparkles, FloatingHearts } from "../Decor";
 import { SaveIcon, PinIcon, UtensilsIcon, ClockIcon, HeartIcon } from "../icons";
 import { IconBadge } from "../GradientIcon";
-import { formatDateLabel } from "./StepDateTime";
+import { formatDateLabel } from "@/lib/dateConfig";
 
 function resolveStart(date, time) {
   if (date && time) {

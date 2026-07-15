@@ -17,7 +17,7 @@ const TOOLTIPS = [
   { text: "Tombolnya menolak ditekan", icon: EyeOff },
 ];
 
-export default function StepQuestion({ onYes }) {
+export default function StepQuestion({ onYes, name }) {
   const [dodges, setDodges] = useState(0);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [tooltip, setTooltip] = useState(null);
@@ -97,7 +97,7 @@ export default function StepQuestion({ onYes }) {
           className="flex max-w-sm flex-col items-center text-center"
         >
           <h1 className="font-serif text-[1.85rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2rem]">
-            Maukah kamu pergi{" "}
+            Maukah {name || "kamu"} pergi{" "}
             <motion.em
               animate={{ scale: [1, 1.06, 1] }}
               transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}

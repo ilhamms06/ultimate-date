@@ -2,43 +2,17 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { UtensilsCrossed, Clapperboard, Trees, Gamepad2 } from "lucide-react";
 import Button from "../Button";
 import { FloatingHearts } from "../Decor";
 import { CheckIcon, ArrowRightIcon, HeartIcon } from "../icons";
+import { ACTIVITY_CATALOG } from "@/lib/dateConfig";
 
-export const ACTIVITIES = [
-  {
-    id: "dinner",
-    label: "Kencan Makan Malam",
-    Icon: UtensilsCrossed,
-    img: "/images/icon/dinner-date.png",
-    bg: "bg-linear-to-br from-amber-100 via-orange-50 to-rose-100",
-  },
-  {
-    id: "movie",
-    label: "Kencan Nonton",
-    Icon: Clapperboard,
-    img: "/images/icon/movie-date.png",
-    bg: "bg-linear-to-br from-violet-100 via-purple-50 to-fuchsia-100",
-  },
-  {
-    id: "park",
-    label: "Jalan di Taman",
-    Icon: Trees,
-    img: "/images/icon/park-date.png",
-    bg: "bg-linear-to-br from-lime-100 via-green-50 to-emerald-100",
-  },
-  {
-    id: "gaming",
-    label: "Kencan Main Game",
-    Icon: Gamepad2,
-    img: "/images/icon/playstation-date.png",
-    bg: "bg-linear-to-br from-sky-100 via-indigo-50 to-violet-100",
-  },
-];
-
-export default function StepActivity({ selected, onSelect, onNext }) {
+export default function StepActivity({
+  activities = ACTIVITY_CATALOG,
+  selected,
+  onSelect,
+  onNext,
+}) {
   return (
     <div className="relative flex h-full w-full flex-col overflow-visible px-5 py-8">
       <Image
@@ -70,7 +44,7 @@ export default function StepActivity({ selected, onSelect, onNext }) {
       </header>
 
       <div className="relative z-10 grid flex-1 grid-cols-2 content-start gap-3 overflow-visible pb-2">
-        {ACTIVITIES.map((a, i) => {
+        {activities.map((a, i) => {
           const isActive = selected === a.id;
           return (
             <div key={a.id} className="relative overflow-visible">

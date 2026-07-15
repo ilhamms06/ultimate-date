@@ -13,7 +13,7 @@ const stripeStyle = {
     "repeating-linear-gradient(135deg, var(--pink-300) 0 8px, #fff 8px 16px, var(--purple-300) 16px 24px, #fff 24px 32px)",
 };
 
-export default function StepOpening({ onNext }) {
+export default function StepOpening({ onNext, name }) {
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center px-6 py-10 text-center">
       <Image
@@ -66,8 +66,8 @@ export default function StepOpening({ onNext }) {
           />
 
           <div className="relative px-6">
-            <h1 className="flex items-center justify-center gap-2 font-display text-[1.9rem] font-extrabold leading-tight text-ink">
-              Hei <span className="text-pink-500">kamu!</span>
+            <h1 className="flex flex-wrap items-center justify-center gap-x-2 font-display text-[1.9rem] font-extrabold leading-tight text-ink">
+              Hei <span className="text-pink-500">{name || "kamu"}!</span>
               <GradientIcon icon={Mail} className="h-7 w-7 shrink-0" />
             </h1>
             <p className="mt-2 font-display text-base font-extrabold text-ink">

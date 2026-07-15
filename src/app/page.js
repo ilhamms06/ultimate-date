@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import StepOpening from "@/components/steps/StepOpening";
 import StepQuestion from "@/components/steps/StepQuestion";
-import StepActivity, { ACTIVITIES } from "@/components/steps/StepActivity";
-import StepLocation, { findLocation } from "@/components/steps/StepLocation";
+import StepActivity from "@/components/steps/StepActivity";
+import StepLocation from "@/components/steps/StepLocation";
 import StepDateTime from "@/components/steps/StepDateTime";
 import StepFinal from "@/components/steps/StepFinal";
 import HeartProgress from "@/components/HeartProgress";
+import { decodeConfig, findLocation, resolveConfig } from "@/lib/dateConfig";
 
 const STEPS = ["opening", "question", "activity", "location", "datetime", "final"];
 
@@ -19,7 +20,15 @@ const transition = {
   transition: { duration: 0.35, ease: "easeInOut" },
 };
 
+function readRawConfig() {
+  if (typeof window === "undefined") return null;
+  return decodeConfig(new URLSearchParams(window.location.search).get("d"));
+}
+
 export default function Home() {
+  const config = useMemo(() => resolveConfig(readRawConfig()), []);
+  const { name, activities, locationsByActivity, days, timeSlots } = config;
+
   const [step, setStep] = useState(0);
   const [activityId, setActivityId] = useState(null);
   const [locationId, setLocationId] = useState(null);
@@ -30,9 +39,12 @@ export default function Home() {
   const next = () => go(step + 1);
   const back = () => go(step - 1);
 
-  const activity = ACTIVITIES.find((a) => a.id === activityId);
+  const activity = activities.find((a) => a.id === activityId);
+  const locations = activityId ? locationsByActivity[activityId] ?? [] : [];
   const location =
-    activityId && locationId ? findLocation(activityId, locationId) : null;
+    activityId && locationId
+      ? findLocation(locationsByActivity, activityId, locationId)
+      : null;
 
   function handleActivitySelect(id) {
     setActivityId(id);
@@ -66,10 +78,11 @@ export default function Home() {
             transition={transition.transition}
             className="absolute inset-0"
           >
-            {step === 0 && <StepOpening onNext={next} />}
-            {step === 1 && <StepQuestion onYes={next} />}
+            {step === 0 && <StepOpening onNext={next} name={name} />}
+            {step === 1 && <StepQuestion onYes={next} name={name} />}
             {step === 2 && (
               <StepActivity
+                activities={activities}
                 selected={activityId}
                 onSelect={handleActivitySelect}
                 onNext={next}
@@ -77,7 +90,7 @@ export default function Home() {
             )}
             {step === 3 && (
               <StepLocation
-                activityId={activityId}
+                locations={locations}
                 selected={locationId}
                 onSelect={setLocationId}
                 onNext={next}
@@ -85,6 +98,8 @@ export default function Home() {
             )}
             {step === 4 && (
               <StepDateTime
+                days={days}
+                timeSlots={timeSlots}
                 date={date}
                 time={time}
                 onDateChange={setDate}
