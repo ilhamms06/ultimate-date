@@ -2,7 +2,7 @@ import {
   UtensilsCrossed,
   Clapperboard,
   Trees,
-  Gamepad2,
+  Coffee,
   Sunrise,
   Sun,
   Sunset,
@@ -38,11 +38,11 @@ export const ACTIVITY_CATALOG = [
     bg: "bg-linear-to-br from-lime-100 via-green-50 to-emerald-100",
   },
   {
-    id: "gaming",
-    label: "Kencan Main Game",
-    Icon: Gamepad2,
-    img: "/images/icon/playstation-date.png",
-    bg: "bg-linear-to-br from-sky-100 via-indigo-50 to-violet-100",
+    id: "coffee",
+    label: "Kencan Ngopi",
+    Icon: Coffee,
+    img: "/images/icon/coffe-date.png",
+    bg: "bg-linear-to-br from-amber-200 via-orange-50 to-rose-100",
   },
 ];
 
@@ -98,12 +98,12 @@ export const DEFAULT_LOCATIONS = {
     { n: "Taman Menteng", t: "mall" },
     { n: "Taman Tebet Eco Park", t: "mall" },
   ],
-  gaming: [
-    { n: "Blok M Plaza", t: "mall" },
-    { n: "Kota Kasablanka", t: "mall" },
-    { n: "Senayan City", t: "mall" },
-    { n: "Central Park", t: "mall" },
-    { n: "Lippo Mall Puri", t: "mall" },
+  coffee: [
+    { n: "Kopi Kenangan", t: "mall" },
+    { n: "Fore Coffee", t: "mall" },
+    { n: "Starbucks Reserve", t: "mall" },
+    { n: "Tuku Kebayoran", t: "mall" },
+    { n: "Djournal Coffee", t: "mall" },
   ],
 };
 

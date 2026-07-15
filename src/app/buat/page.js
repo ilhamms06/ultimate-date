@@ -199,7 +199,7 @@ export default function SetupPage() {
     <main className="flex min-h-dvh w-full items-center justify-center p-0 sm:p-6">
       <div className="relative h-dvh w-full max-w-[420px] overflow-hidden bg-white/10 sm:h-[850px] sm:rounded-[2.75rem] sm:border-8 sm:border-white sm:shadow-[0_30px_80px_-20px_rgba(176,125,255,0.5)]">
         <Image
-          src="/images/background/bg1.png"
+          src="/images/background/bg-date.png"
           alt=""
           fill
           priority
