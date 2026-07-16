@@ -75,6 +75,15 @@ body {
   border-radius: 999px;
 }
 
+/* Scrollable, but with the scroll indicator hidden. */
+@utility scrollbar-none {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge/IE */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+}
+
 /* ----- Decorative animations ----- */
 @keyframes floatUp {
   0% {

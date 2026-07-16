@@ -49,8 +49,9 @@ export default function StepActivity({
         </div>
       </header>
 
-      <div className="relative z-10 grid flex-1 grid-cols-2 content-start gap-3 overflow-visible pb-2">
-        {activities.map((a, i) => {
+      <div className="relative z-10 min-h-0 flex-1 overflow-y-auto scrollbar-none">
+        <div className="grid grid-cols-2 content-start gap-3 px-2.5 pb-3 pt-2.5">
+          {activities.map((a, i) => {
           const isActive = selected === a.id;
           return (
             <div key={a.id} className="relative overflow-visible">
@@ -139,6 +140,7 @@ export default function StepActivity({
             </div>
           );
         })}
+        </div>
       </div>
 
       <div className="relative z-10 mt-4">
