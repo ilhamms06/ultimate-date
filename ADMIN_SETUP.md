@@ -41,7 +41,9 @@ Restart `npm run dev` after editing env.
 - `/buat` — sender builds an invite; **Buat Link** now saves it and produces a
   tracked `/?i=<id>` link (falls back to self-contained `/?d=` if Supabase is down)
 - `/admin` — password-gated dashboard:
-  - **Wording** — edit every display string
+  - **Wording** — edit the key strings (per-screen title, subtitle, primary
+    button, + page metadata). Other micro-copy stays in code; add its key to the
+    `content` seed in `supabase/schema.sql` to make it editable too.
   - **Aktivitas** — add/edit/disable activities (label, lucide icon, uploaded image, color, order)
   - **Pengguna** — who created invites, whether opened, and whether they answered YA + their choices
 
