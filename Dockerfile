@@ -1,13 +1,13 @@
 # syntax=docker/dockerfile:1
 
 # --- deps: install dependencies ---
-FROM node:22-alpine AS deps
+FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
 # --- builder: build the Next.js app (standalone output) ---
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 
 # NEXT_PUBLIC_* di-inline ke bundle saat build, jadi harus tersedia di sini
@@ -21,7 +21,7 @@ COPY . .
 RUN npm run build
 
 # --- runner: image produksi ---
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
