@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { CalendarHeart, Heart as HeartIconLucide } from "lucide-react";
 import Button from "../Button";
-import { HeartIcon, ArrowRightIcon, CheckIcon } from "../icons";
+import { HeartIcon, ArrowRightIcon } from "../icons";
 import { IconBadge } from "../GradientIcon";
 import { formatDateLabel } from "@/lib/dateConfig";
 import { useContent } from "../ContentProvider";
@@ -183,20 +183,6 @@ function TimeCard({ slot, isActive, onSelect, index }) {
             {slot.part}
           </span>
         </div>
-
-        <AnimatePresence>
-          {isActive && (
-            <motion.span
-              initial={{ scale: 0, rotate: -90 }}
-              animate={{ scale: 1, rotate: 0 }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 14 }}
-              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-pink-400 text-white shadow-md"
-            >
-              <CheckIcon className="h-3.5 w-3.5" />
-            </motion.span>
-          )}
-        </AnimatePresence>
       </motion.button>
 
       <BurstHearts show={isActive} />

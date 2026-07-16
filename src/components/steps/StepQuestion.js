@@ -27,6 +27,13 @@ export default function StepQuestion({ onYes, name }) {
 
   const yesScale = Math.min(1 + dodges * 0.1, 1.55);
 
+  const rabbitSrc =
+    dodges === 0
+      ? "/images/icon/rabbit-love.png"
+      : dodges <= 2
+        ? "/images/icon/rabbit-flat.png"
+        : "/images/icon/rabbit-sad.png";
+
   function dodge() {
     const x = (Math.random() - 0.5) * 180;
     const y = (Math.random() - 0.5) * 160;
@@ -60,14 +67,22 @@ export default function StepQuestion({ onYes, name }) {
             transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
             className="relative h-48 w-48 drop-shadow-[0_18px_28px_rgba(255,91,160,0.35)] sm:h-52 sm:w-52"
           >
-            <Image
-              src="/images/icon/rabbit-love.png"
-              alt={t("question.rabbitAlt", "Kelinci lucu membawa hati")}
-              fill
-              priority
-              sizes="208px"
-              className="object-contain"
-            />
+            <motion.div
+              key={rabbitSrc}
+              initial={dodges === 0 ? false : { scale: 0.85, rotate: -6 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 320, damping: 14 }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={rabbitSrc}
+                alt={t("question.rabbitAlt", "Kelinci lucu membawa hati")}
+                fill
+                priority
+                sizes="208px"
+                className="object-contain"
+              />
+            </motion.div>
 
             <AnimatePresence>
               {tooltip && (

@@ -50,22 +50,9 @@ export function getActivity(id) {
   return ACTIVITY_CATALOG.find((a) => a.id === id) ?? null;
 }
 
-export const PLACE_TYPES = {
-  cinema: {
-    label: "Bioskop",
-    img: "/images/icon/place-cinema.png",
-    tint: "from-pink-300/30 via-white/15 to-rose-200/10",
-  },
-  mall: {
-    label: "Mall",
-    img: "/images/icon/place-mall.png",
-    tint: "from-violet-300/30 via-white/15 to-fuchsia-200/10",
-  },
-};
-
-export const PLACE_TYPE_OPTIONS = Object.entries(PLACE_TYPES).map(
-  ([id, info]) => ({ id, ...info })
-);
+/* Soft, uniform tint for every location card — icons come from the
+ * parent activity, so places no longer carry their own type/art. */
+const LOCATION_TINT = "from-pink-200/25 via-white/10 to-rose-200/10";
 
 export const TIME_SLOT_CATALOG = [
   { id: "10:00", label: "10:00", part: "Pagi", Icon: Sunrise },
@@ -206,23 +193,18 @@ export function decodeConfig(str) {
  * Falls back to the original demo data when a field is missing.
  * ------------------------------------------------------------------ */
 
-function resolveLocations(list, keyPrefix) {
+function resolveLocations(list, keyPrefix, activity) {
   return (list ?? [])
     .filter((l) => l && (l.n ?? l.placeName))
-    .map((l, index) => {
-      const type = PLACE_TYPES[l.t ?? l.type] ? l.t ?? l.type : "mall";
-      const typeInfo = PLACE_TYPES[type];
-      return {
-        id: `${keyPrefix}-${index}`,
-        placeName: l.n ?? l.placeName,
-        type,
-        label: typeInfo.label,
-        img: typeInfo.img,
-        tint: typeInfo.tint,
-        col: index % 2 === 0 ? "left" : "right",
-        row: Math.floor(index / 2),
-      };
-    });
+    .map((l, index) => ({
+      id: `${keyPrefix}-${index}`,
+      placeName: l.n ?? l.placeName,
+      label: activity?.label ?? "",
+      img: activity?.img,
+      tint: LOCATION_TINT,
+      col: index % 2 === 0 ? "left" : "right",
+      row: Math.floor(index / 2),
+    }));
 }
 
 export function resolveConfig(raw, catalog = ACTIVITY_CATALOG) {
@@ -239,7 +221,7 @@ export function resolveConfig(raw, catalog = ACTIVITY_CATALOG) {
   const rawLocs = cfg.locs ?? DEFAULT_LOCATIONS;
   const locationsByActivity = {};
   activityIds.forEach((id) => {
-    locationsByActivity[id] = resolveLocations(rawLocs[id], id);
+    locationsByActivity[id] = resolveLocations(rawLocs[id], id, lookup(id));
   });
 
   const todayISO = toISO(startOfToday());

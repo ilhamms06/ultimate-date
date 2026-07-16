@@ -66,8 +66,8 @@ function LocationCard({ location, isActive, onSelect, index }) {
         aria-label={location.placeName}
         className={`relative flex w-full items-center gap-2.5 overflow-hidden rounded-[1.4rem] border px-2.5 py-2.5 text-left backdrop-blur-xl ${
           isActive
-            ? "border-pink-300/90 bg-white/45 shadow-[0_0_0_3px_rgba(255,182,213,0.5),0_14px_32px_-8px_rgba(255,91,160,0.45)]"
-            : "border-white/60 bg-white/20 shadow-[0_8px_32px_-12px_rgba(176,125,255,0.35)]"
+            ? "border-pink-300/70 bg-white/25 shadow-[0_0_0_3px_rgba(255,182,213,0.35),0_14px_32px_-8px_rgba(255,91,160,0.35)]"
+            : "border-white/40 bg-white/10 shadow-[0_8px_32px_-12px_rgba(176,125,255,0.3)]"
         }`}
       >
         <span
@@ -120,7 +120,7 @@ function LocationCard({ location, isActive, onSelect, index }) {
           className="relative z-10 min-w-0 flex-1"
         >
           <span
-            className={`block font-display text-[0.95rem] font-extrabold leading-snug ${
+            className={`block font-display text-[0.8rem] font-extrabold leading-snug ${
               isActive ? "text-pink-500" : "text-ink"
             }`}
           >
