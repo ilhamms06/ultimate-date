@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: ultimate-date
+    image: ghcr.io/ilhamms06/ultimate-date:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      # Server-only (dibaca saat runtime oleh API routes)
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}
+      - ADMIN_SESSION_SECRET=${ADMIN_SESSION_SECRET}
+      # NEXT_PUBLIC_* sudah di-inline saat build image; dicantumkan di sini
+      # hanya untuk konsistensi bila ada pemakaian di server runtime.
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    restart: always
