@@ -7,6 +7,8 @@ import Button from "../Button";
 import { HeartIcon, ArrowRightIcon, CheckIcon } from "../icons";
 import { IconBadge } from "../GradientIcon";
 import { formatDateLabel } from "@/lib/dateConfig";
+import { useContent } from "../ContentProvider";
+import Emphasis from "../Emphasis";
 
 function SectionLabel({ children }) {
   return (
@@ -46,6 +48,7 @@ function BurstHearts({ show }) {
 }
 
 function DayCard({ day, isActive, onSelect, index }) {
+  const { t } = useContent();
   return (
     <div className="relative shrink-0 px-0.5 py-1">
       <motion.button
@@ -86,7 +89,7 @@ function DayCard({ day, isActive, onSelect, index }) {
             isActive ? "text-white/95" : "text-ink-soft"
           }`}
         >
-          {day.isToday ? "Hari ini" : day.dayName}
+          {day.isToday ? t("datetime.today", "Hari ini") : day.dayName}
         </span>
 
         <motion.span
@@ -210,11 +213,12 @@ export default function StepDateTime({
   onTimeChange,
   onNext,
 }) {
+  const { t } = useContent();
   const canContinue = Boolean(date && time);
   const summary =
     date && time
       ? `${formatDateLabel(date)} · ${time}`
-      : "Pilih hari & waktu";
+      : t("datetime.summaryFallback", "Pilih hari & waktu");
 
   return (
     <div className="relative flex h-full w-full flex-col px-4 pb-5 pt-14">
@@ -243,15 +247,7 @@ export default function StepDateTime({
         className="relative z-10 mb-4 text-center"
       >
         <h1 className="font-serif text-[1.85rem] font-semibold leading-tight tracking-tight text-ink">
-          Kapan kita{" "}
-          <motion.em
-            animate={{ scale: [1, 1.06, 1] }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-            className="inline-block font-serif italic font-medium text-pink-500"
-          >
-            ketemu
-          </motion.em>
-          ?
+          <Emphasis text={t("datetime.title", "Kapan kita *ketemu*?")} animate />
         </h1>
 
         <motion.div
@@ -277,13 +273,13 @@ export default function StepDateTime({
           transition={{ delay: 0.3 }}
           className="text-sm font-semibold text-ink-soft"
         >
-          Pilih hari, lalu waktunya.
+          {t("datetime.subtitle", "Pilih hari, lalu waktunya.")}
         </motion.p>
       </motion.header>
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-[1.75rem] border border-white/70 bg-white/55 p-4 shadow-[0_16px_40px_-20px_rgba(255,91,160,0.35)] backdrop-blur-xl scrollbar-none">
         <section className="mb-5">
-          <SectionLabel>Pilih hari</SectionLabel>
+          <SectionLabel>{t("datetime.dayLabel", "Pilih hari")}</SectionLabel>
           <div className="flex gap-2 overflow-x-auto px-1.5 pb-3 pt-2 scrollbar-none">
             {days.map((d, i) => (
               <DayCard
@@ -298,7 +294,7 @@ export default function StepDateTime({
         </section>
 
         <section className="mb-4">
-          <SectionLabel>Pilih waktu</SectionLabel>
+          <SectionLabel>{t("datetime.timeLabel", "Pilih waktu")}</SectionLabel>
           <div className="grid grid-cols-2 gap-2.5 px-0.5 pt-1">
             {timeSlots.map((slot, i) => (
               <TimeCard
@@ -327,7 +323,10 @@ export default function StepDateTime({
               </p>
             ) : (
               <p className="text-[0.72rem] font-semibold leading-snug text-ink-soft">
-                Santai saja, momen yang tepat membuatnya lebih spesial.
+                {t(
+                  "datetime.hint",
+                  "Santai saja, momen yang tepat membuatnya lebih spesial."
+                )}
               </p>
             )}
           </motion.div>
@@ -340,7 +339,7 @@ export default function StepDateTime({
           disabled={!canContinue}
           className="w-full disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Jadi Kencan!
+          {t("datetime.nextButton", "Jadi Kencan!")}
           <ArrowRightIcon className="h-5 w-5" />
         </Button>
       </div>

@@ -7,6 +7,8 @@ import Button from "../Button";
 import { FloatingHearts, Sparkles } from "../Decor";
 import { ArrowRightIcon, HeartIcon } from "../icons";
 import { GradientIcon } from "../GradientIcon";
+import { useContent } from "../ContentProvider";
+import Emphasis from "../Emphasis";
 
 const stripeStyle = {
   backgroundImage:
@@ -14,6 +16,7 @@ const stripeStyle = {
 };
 
 export default function StepOpening({ onNext, name }) {
+  const { t } = useContent();
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center px-6 py-10 text-center">
       <Image
@@ -40,7 +43,7 @@ export default function StepOpening({ onNext, name }) {
           />
           <Image
             src="/images/icon/rabbit-love.png"
-            alt="Kelinci lucu membawa hati"
+            alt={t("opening.rabbitAlt", "Kelinci lucu membawa hati")}
             fill
             sizes="160px"
             className="relative object-contain drop-shadow-[0_14px_20px_rgba(255,122,178,0.45)]"
@@ -67,11 +70,15 @@ export default function StepOpening({ onNext, name }) {
 
           <div className="relative px-6">
             <h1 className="flex flex-wrap items-center justify-center gap-x-2 font-display text-[1.9rem] font-extrabold leading-tight text-ink">
-              Hei <span className="text-pink-500">{name || "kamu"}!</span>
+              <Emphasis
+                text={t("opening.greeting", "Hei *{name}!*")}
+                values={{ name: name || "kamu" }}
+                emClassName="text-pink-500"
+              />
               <GradientIcon icon={Mail} className="h-7 w-7 shrink-0" />
             </h1>
             <p className="mt-2 font-display text-base font-extrabold text-ink">
-              Ada yang penting yang mau aku tanyakan...
+              {t("opening.subtitle", "Ada yang penting yang mau aku tanyakan...")}
             </p>
 
             <div
@@ -84,7 +91,7 @@ export default function StepOpening({ onNext, name }) {
             </div>
 
             <p className="flex items-center justify-center gap-1.5 text-sm font-semibold text-ink-soft">
-              Janji jangan pergi sebelum menjawab ya
+              {t("opening.promise", "Janji jangan pergi sebelum menjawab ya")}
               <GradientIcon icon={HeartHandshake} className="h-4 w-4 shrink-0" />
             </p>
           </div>
@@ -97,7 +104,7 @@ export default function StepOpening({ onNext, name }) {
           className="relative z-20 -mt-6 w-[85%]"
         >
           <Button onClick={onNext} className="w-full text-lg">
-            Buka Pertanyaannya
+            {t("opening.ctaButton", "Buka Pertanyaannya")}
             <ArrowRightIcon className="h-5 w-5" />
           </Button>
         </motion.div>

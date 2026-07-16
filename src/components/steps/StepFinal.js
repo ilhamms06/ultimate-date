@@ -9,6 +9,14 @@ import { Confetti, Sparkles, FloatingHearts } from "../Decor";
 import { SaveIcon, PinIcon, UtensilsIcon, ClockIcon, HeartIcon } from "../icons";
 import { IconBadge } from "../GradientIcon";
 import { formatDateLabel } from "@/lib/dateConfig";
+import { useContent } from "../ContentProvider";
+import Emphasis from "../Emphasis";
+
+function fill(tpl, values) {
+  return String(tpl).replace(/\{(\w+)\}/g, (_, k) =>
+    values[k] != null ? values[k] : ""
+  );
+}
 
 function resolveStart(date, time) {
   if (date && time) {
@@ -22,7 +30,7 @@ function resolveStart(date, time) {
   return fallback;
 }
 
-function buildICS({ activityLabel, locationLabel, date, time }) {
+function buildICS({ summary, description, locationLabel, date, time }) {
   const start = resolveStart(date, time);
   const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
   const fmt = (d) =>
@@ -36,9 +44,9 @@ function buildICS({ activityLabel, locationLabel, date, time }) {
     `DTSTAMP:${fmt(new Date())}`,
     `DTSTART:${fmt(start)}`,
     `DTEND:${fmt(end)}`,
-    `SUMMARY:Kencan Kita - ${activityLabel}`,
+    `SUMMARY:${summary}`,
     `LOCATION:${locationLabel}`,
-    `DESCRIPTION:${activityLabel} di ${locationLabel}. Tidak sabar!`,
+    `DESCRIPTION:${description}`,
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n");
@@ -87,6 +95,7 @@ function SummaryRow({ icon, label, value, decoration }) {
 }
 
 export default function StepFinal({ activity, location, date, time, onRestart }) {
+  const { t } = useContent();
   const [toast, setToast] = useState(null);
   const dateLabel = formatDateLabel(date);
 
@@ -96,9 +105,16 @@ export default function StepFinal({ activity, location, date, time, onRestart })
   }
 
   function handleSave() {
+    const activityLabel = activity?.label ?? "Kencan";
+    const locationLabel = location?.placeName ?? location?.label ?? "";
+    const values = { activityLabel, locationLabel };
     const ics = buildICS({
-      activityLabel: activity?.label ?? "Kencan",
-      locationLabel: location?.placeName ?? location?.label ?? "",
+      summary: fill(t("final.icsSummary", "Kencan Kita - {activityLabel}"), values),
+      description: fill(
+        t("final.icsDescription", "{activityLabel} di {locationLabel}. Tidak sabar!"),
+        values
+      ),
+      locationLabel,
       date,
       time,
     });
@@ -109,7 +125,7 @@ export default function StepFinal({ activity, location, date, time, onRestart })
     a.download = "kencan-kita.ics";
     a.click();
     URL.revokeObjectURL(url);
-    flash("Tersimpan ke kalender!", CalendarHeart);
+    flash(t("final.saveToast", "Tersimpan ke kalender!"), CalendarHeart);
   }
 
   const whenValue =
@@ -149,15 +165,7 @@ export default function StepFinal({ activity, location, date, time, onRestart })
         className="relative z-10 text-center mt-24"
       >
         <h1 className="font-serif text-[1.85rem] font-semibold leading-tight tracking-tight text-ink">
-          Yeay, kita{" "}
-          <motion.em
-            animate={{ scale: [1, 1.06, 1] }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-            className="inline-block font-serif italic font-medium text-pink-500"
-          >
-            fix
-          </motion.em>{" "}
-          kencan!
+          <Emphasis text={t("final.title", "Yeay, kita *fix* kencan!")} animate />
         </h1>
 
         <motion.div
@@ -183,7 +191,7 @@ export default function StepFinal({ activity, location, date, time, onRestart })
           transition={{ delay: 0.3 }}
           className="text-sm font-semibold text-ink-soft"
         >
-          Tinggal cus pas harinya, gak usah ribet mikir.
+          {t("final.subtitle", "Tinggal cus pas harinya, gak usah ribet mikir.")}
         </motion.p>
       </motion.header>
 
@@ -196,7 +204,7 @@ export default function StepFinal({ activity, location, date, time, onRestart })
         <div className="divide-y divide-white/40">
           <SummaryRow
             icon={<UtensilsIcon className="h-5 w-5" />}
-            label="Aktivitas"
+            label={t("final.rowActivity", "Aktivitas")}
             value={activityValue}
             decoration={
               <span className="flex items-center -space-x-1 text-pink-400">
@@ -207,7 +215,7 @@ export default function StepFinal({ activity, location, date, time, onRestart })
           />
           <SummaryRow
             icon={<PinIcon className="h-5 w-5" />}
-            label="Lokasi"
+            label={t("final.rowLocation", "Lokasi")}
             value={location?.placeName ?? location?.label ?? "—"}
             decoration={
               location?.img ? (
@@ -230,7 +238,7 @@ export default function StepFinal({ activity, location, date, time, onRestart })
           />
           <SummaryRow
             icon={<ClockIcon className="h-5 w-5" />}
-            label="Waktu"
+            label={t("final.rowTime", "Waktu")}
             value={whenValue}
             decoration={<CalendarDecor className="h-11 w-10 drop-shadow-sm" />}
           />
@@ -240,13 +248,13 @@ export default function StepFinal({ activity, location, date, time, onRestart })
       <div className="relative z-10 mt-auto w-full max-w-sm space-y-2">
         <Button onClick={handleSave} className="w-full">
           <SaveIcon className="h-5 w-5" />
-          Catet di Kalender
+          {t("final.saveButton", "Catet di Kalender")}
         </Button>
         <button
           onClick={onRestart}
           className="w-full pt-1 text-xs font-semibold text-ink-soft/70 underline-offset-4 hover:underline"
         >
-          mulai ulang
+          {t("final.restartLink", "mulai ulang")}
         </button>
       </div>
 

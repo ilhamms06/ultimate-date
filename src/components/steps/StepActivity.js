@@ -5,7 +5,10 @@ import { motion } from "framer-motion";
 import Button from "../Button";
 import { FloatingHearts } from "../Decor";
 import { CheckIcon, ArrowRightIcon, HeartIcon } from "../icons";
+import { IconBadge } from "../GradientIcon";
 import { ACTIVITY_CATALOG } from "@/lib/dateConfig";
+import { useContent } from "../ContentProvider";
+import Emphasis from "../Emphasis";
 
 export default function StepActivity({
   activities = ACTIVITY_CATALOG,
@@ -13,6 +16,7 @@ export default function StepActivity({
   onSelect,
   onNext,
 }) {
+  const { t } = useContent();
   return (
     <div className="relative flex h-full w-full flex-col overflow-visible px-5 py-8">
       <Image
@@ -26,15 +30,17 @@ export default function StepActivity({
 
       <header className="relative z-10 mb-5 mt-16 text-center">
         <h1 className="font-serif text-[1.85rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2rem]">
-          Kencan seperti apa yang{" "}
-          <em className="font-serif italic font-medium text-pink-500">seru</em>?
+          <Emphasis text={t("activity.title", "Kencan seperti apa yang *seru*?")} />
           <span className="ml-1 inline-flex items-center gap-0.5 align-middle text-pink-400" aria-hidden="true">
             <HeartIcon className="h-3.5 w-3.5" />
             <HeartIcon className="h-3.5 w-3.5" />
           </span>
         </h1>
         <p className="mx-auto mt-2 max-w-[18rem] text-sm font-semibold leading-snug text-ink-soft">
-          Pilih suasana yang cocok dengan mood-mu dan mari buat tak terlupakan!
+          {t(
+            "activity.subtitle",
+            "Pilih suasana yang cocok dengan mood-mu dan mari buat tak terlupakan!"
+          )}
         </p>
         <div className="mt-3 flex items-center justify-center gap-2.5" aria-hidden="true">
           <span className="h-px w-10 bg-pink-300/80" />
@@ -100,15 +106,23 @@ export default function StepActivity({
                     ease: "easeInOut",
                     delay: i * 0.2,
                   }}
-                  className="relative h-full w-full"
+                  className="relative flex h-full w-full items-center justify-center"
                 >
-                  <Image
-                    src={a.img}
-                    alt={a.label}
-                    fill
-                    sizes="180px"
-                    className="object-contain drop-shadow-[0_6px_10px_rgba(176,125,255,0.35)]"
-                  />
+                  {a.img ? (
+                    <Image
+                      src={a.img}
+                      alt={a.label}
+                      fill
+                      sizes="180px"
+                      className="object-contain drop-shadow-[0_6px_10px_rgba(176,125,255,0.35)]"
+                    />
+                  ) : (
+                    <IconBadge
+                      icon={a.Icon}
+                      className="h-16 w-16"
+                      iconClassName="h-8 w-8"
+                    />
+                  )}
                 </motion.span>
               </motion.button>
 
@@ -133,7 +147,7 @@ export default function StepActivity({
           disabled={!selected}
           className="w-full disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Lanjut
+          {t("activity.nextButton", "Lanjut")}
           <ArrowRightIcon className="h-5 w-5" />
         </Button>
       </div>

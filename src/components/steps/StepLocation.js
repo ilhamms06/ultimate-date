@@ -6,6 +6,8 @@ import { Star, MapPin } from "lucide-react";
 import Button from "../Button";
 import { CheckIcon, ArrowRightIcon, HeartIcon } from "../icons";
 import { GradientIcon, IconBadge } from "../GradientIcon";
+import { useContent } from "../ContentProvider";
+import Emphasis from "../Emphasis";
 
 function BurstHearts({ show }) {
   const particles = [
@@ -147,6 +149,7 @@ function LocationCard({ location, isActive, onSelect, index }) {
 }
 
 export default function StepLocation({ locations = [], selected, onSelect, onNext }) {
+  const { t } = useContent();
   const leftCol = locations.filter((l) => l.col === "left");
   const rightCol = locations.filter((l) => l.col === "right");
 
@@ -176,15 +179,7 @@ export default function StepLocation({ locations = [], selected, onSelect, onNex
         className="relative z-10 mb-5 text-center"
       >
         <h1 className="font-serif text-[1.85rem] font-semibold leading-tight tracking-tight text-ink">
-          Mau{" "}
-          <motion.em
-            animate={{ scale: [1, 1.06, 1] }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-            className="inline-block font-serif italic font-medium text-pink-500"
-          >
-            ke mana
-          </motion.em>{" "}
-          kita?
+          <Emphasis text={t("location.title", "Mau *ke mana* kita?")} animate />
           <motion.span
             animate={{ y: [0, -5, 0], rotate: [0, -8, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -217,7 +212,7 @@ export default function StepLocation({ locations = [], selected, onSelect, onNex
           transition={{ delay: 0.3 }}
           className="text-sm font-semibold text-ink-soft"
         >
-          Pilih tempat untuk mulai kencan kita
+          {t("location.subtitle", "Pilih tempat untuk mulai kencan kita")}
         </motion.p>
       </motion.header>
 
@@ -254,7 +249,7 @@ export default function StepLocation({ locations = [], selected, onSelect, onNex
           disabled={!selected}
           className="w-full disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Jadi Kencan!
+          {t("location.nextButton", "Jadi Kencan!")}
           <ArrowRightIcon className="h-5 w-5" />
         </Button>
       </div>

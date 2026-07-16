@@ -19,25 +19,28 @@ import {
 import Button from "@/components/Button";
 import { IconBadge } from "@/components/GradientIcon";
 import { HeartIcon } from "@/components/icons";
+import { useContent } from "@/components/ContentProvider";
+import Emphasis from "@/components/Emphasis";
 import {
-  ACTIVITY_CATALOG,
   PLACE_TYPE_OPTIONS,
   TIME_SLOT_CATALOG,
   upcomingISO,
   buildDayObjects,
   encodeConfig,
 } from "@/lib/dateConfig";
+import { createInvite } from "@/lib/invites";
 
 const DAY_OPTIONS = buildDayObjects(upcomingISO(14));
 const DEFAULT_TYPE = PLACE_TYPE_OPTIONS[0].id;
 
 function SectionHeader({ icon, step, title, subtitle }) {
+  const { t } = useContent();
   return (
     <div className="mb-3 flex items-center gap-3">
       <IconBadge icon={icon} className="h-9 w-9" iconClassName="h-4.5 w-4.5" />
       <div className="min-w-0">
         <p className="text-[0.7rem] font-bold uppercase tracking-wide text-pink-400">
-          Langkah {step}
+          {t("setup.stepLabel", "Langkah {step}").replace("{step}", step)}
         </p>
         <h2 className="font-display text-lg font-extrabold leading-tight text-ink">
           {title}
@@ -61,6 +64,7 @@ function Panel({ children, className = "" }) {
 }
 
 export default function SetupPage() {
+  const { t, activities: catalog } = useContent();
   const [to, setTo] = useState("");
   const [acts, setActs] = useState([]);
   const [locsByAct, setLocsByAct] = useState({});
@@ -68,6 +72,7 @@ export default function SetupPage() {
   const [times, setTimes] = useState([]);
   const [link, setLink] = useState("");
   const [copied, setCopied] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
   function toggleActivity(id) {
     setActs((prev) => {
@@ -122,7 +127,7 @@ export default function SetupPage() {
   const toggleDay = toggleFrom(setDays);
   const toggleTime = toggleFrom(setTimes);
 
-  const orderedActs = ACTIVITY_CATALOG.filter((a) => acts.includes(a.id));
+  const orderedActs = catalog.filter((a) => acts.includes(a.id));
 
   const config = useMemo(() => {
     const locs = {};
@@ -153,13 +158,24 @@ export default function SetupPage() {
   if (!config.times.length) missing.push("minimal 1 jam");
   const canGenerate = missing.length === 0;
 
-  function generate() {
-    if (!canGenerate) return;
+  async function generate() {
+    if (!canGenerate || generating) return;
+    setGenerating(true);
     const origin =
       typeof window !== "undefined" ? window.location.origin : "";
-    const url = `${origin}/?d=${encodeConfig(config)}`;
+    // Persist the invite for tracking; fall back to a self-contained link.
+    let url;
+    try {
+      const id = await createInvite(config);
+      url = id
+        ? `${origin}/?i=${id}`
+        : `${origin}/?d=${encodeConfig(config)}`;
+    } catch {
+      url = `${origin}/?d=${encodeConfig(config)}`;
+    }
     setLink(url);
     setCopied(false);
+    setGenerating(false);
     if (typeof window !== "undefined") {
       requestAnimationFrame(() => {
         document
@@ -183,8 +199,11 @@ export default function SetupPage() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "Undangan Kencan",
-          text: `Hei ${config.to}, ada sesuatu buat kamu 💌`,
+          title: t("setup.share.title", "Undangan Kencan"),
+          text: t("setup.share.text", "Hei {name}, ada sesuatu buat kamu").replace(
+            "{name}",
+            config.to
+          ),
           url: link,
         });
       } else {
@@ -229,10 +248,7 @@ export default function SetupPage() {
               </motion.div>
             </div>
             <h1 className="font-serif text-[1.85rem] font-semibold leading-tight tracking-tight text-ink">
-              Bikin undangan{" "}
-              <span className="font-serif italic font-medium text-pink-500">
-                kencan
-              </span>
+              <Emphasis text={t("setup.title", "Bikin undangan *kencan*")} />
             </h1>
             <div
               className="mt-2.5 mb-2 flex items-center justify-center gap-2.5"
@@ -243,7 +259,7 @@ export default function SetupPage() {
               <span className="h-px w-10 bg-pink-300/80" />
             </div>
             <p className="text-sm font-semibold text-ink-soft">
-              Atur pilihannya, lalu kirim link ke dia.
+              {t("setup.subtitle", "Atur pilihannya, lalu kirim link ke dia.")}
             </p>
           </motion.header>
 
@@ -253,8 +269,8 @@ export default function SetupPage() {
               <SectionHeader
                 icon={User}
                 step={1}
-                title="Buat siapa nih?"
-                subtitle="Nama yang bakal muncul di undangannya."
+                title={t("setup.step1.title", "Buat siapa nih?")}
+                subtitle={t("setup.step1.subtitle", "Nama yang bakal muncul di undangannya.")}
               />
               <input
                 type="text"
@@ -264,7 +280,7 @@ export default function SetupPage() {
                   setLink("");
                 }}
                 maxLength={24}
-                placeholder="Nama penerima…"
+                placeholder={t("setup.step1.placeholder", "Nama penerima…")}
                 className="w-full rounded-2xl border border-white/70 bg-white/60 px-4 py-3 font-display text-base font-bold text-ink placeholder:font-semibold placeholder:text-ink-soft/60 focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-300/50"
               />
             </Panel>
@@ -272,13 +288,13 @@ export default function SetupPage() {
             {/* 2. Activities */}
             <Panel>
               <SectionHeader
-                icon={ACTIVITY_CATALOG[0].Icon}
+                icon={catalog[0]?.Icon ?? User}
                 step={2}
-                title="Pilihan aktivitas"
-                subtitle="Aktivitas apa aja yang bisa dia pilih."
+                title={t("setup.step2.title", "Pilihan aktivitas")}
+                subtitle={t("setup.step2.subtitle", "Aktivitas apa aja yang bisa dia pilih.")}
               />
               <div className="grid grid-cols-2 gap-2.5">
-                {ACTIVITY_CATALOG.map((a) => {
+                {catalog.map((a) => {
                   const active = acts.includes(a.id);
                   return (
                     <button
@@ -298,14 +314,18 @@ export default function SetupPage() {
                         }`}
                         aria-hidden="true"
                       />
-                      <span className="relative h-9 w-9 shrink-0">
-                        <Image
-                          src={a.img}
-                          alt=""
-                          fill
-                          sizes="36px"
-                          className="object-contain drop-shadow-[0_3px_6px_rgba(176,125,255,0.35)]"
-                        />
+                      <span className="relative flex h-9 w-9 shrink-0 items-center justify-center">
+                        {a.img ? (
+                          <Image
+                            src={a.img}
+                            alt=""
+                            fill
+                            sizes="36px"
+                            className="object-contain drop-shadow-[0_3px_6px_rgba(176,125,255,0.35)]"
+                          />
+                        ) : (
+                          <IconBadge icon={a.Icon} className="h-9 w-9" iconClassName="h-4.5 w-4.5" />
+                        )}
                       </span>
                       <span className="relative min-w-0 flex-1 font-display text-xs font-extrabold leading-tight text-ink">
                         {a.label}
@@ -333,21 +353,25 @@ export default function SetupPage() {
                     <SectionHeader
                       icon={MapPin}
                       step={3}
-                      title="Tempatnya di mana?"
-                      subtitle="Isi pilihan lokasi untuk tiap aktivitas."
+                      title={t("setup.step3.title", "Tempatnya di mana?")}
+                      subtitle={t("setup.step3.subtitle", "Isi pilihan lokasi untuk tiap aktivitas.")}
                     />
                     <div className="space-y-4">
                       {orderedActs.map((a) => (
                         <div key={a.id}>
                           <div className="mb-2 flex items-center gap-2">
-                            <span className="relative h-6 w-6 shrink-0">
-                              <Image
-                                src={a.img}
-                                alt=""
-                                fill
-                                sizes="24px"
-                                className="object-contain"
-                              />
+                            <span className="relative flex h-6 w-6 shrink-0 items-center justify-center">
+                              {a.img ? (
+                                <Image
+                                  src={a.img}
+                                  alt=""
+                                  fill
+                                  sizes="24px"
+                                  className="object-contain"
+                                />
+                              ) : (
+                                <a.Icon className="h-4 w-4 text-pink-500" strokeWidth={2.2} />
+                              )}
                             </span>
                             <span className="font-display text-sm font-extrabold text-ink">
                               {a.label}
@@ -368,13 +392,13 @@ export default function SetupPage() {
                                       updateLoc(a.id, i, { n: e.target.value })
                                     }
                                     maxLength={40}
-                                    placeholder="Nama tempat…"
+                                    placeholder={t("setup.step3.placeholder", "Nama tempat…")}
                                     className="min-w-0 flex-1 rounded-xl border border-white/70 bg-white/70 px-3 py-2 text-sm font-bold text-ink placeholder:font-semibold placeholder:text-ink-soft/60 focus:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-300/40"
                                   />
                                   <button
                                     type="button"
                                     onClick={() => removeLoc(a.id, i)}
-                                    aria-label="Hapus tempat"
+                                    aria-label={t("setup.step3.removeAria", "Hapus tempat")}
                                     className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/70 text-ink-soft transition-colors hover:text-pink-500"
                                   >
                                     <X className="h-4 w-4" strokeWidth={2.6} />
@@ -421,7 +445,7 @@ export default function SetupPage() {
                             className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-dashed border-pink-300 bg-white/40 px-3 py-1.5 text-xs font-bold text-pink-500 transition-colors hover:bg-white/70"
                           >
                             <Plus className="h-3.5 w-3.5" strokeWidth={2.8} />
-                            Tambah tempat
+                            {t("setup.step3.addButton", "Tambah tempat")}
                           </button>
                         </div>
                       ))}
@@ -436,12 +460,12 @@ export default function SetupPage() {
               <SectionHeader
                 icon={CalendarHeart}
                 step={4}
-                title="Kapan kamu bisa?"
-                subtitle="Pilih hari & jam yang kamu available."
+                title={t("setup.step4.title", "Kapan kamu bisa?")}
+                subtitle={t("setup.step4.subtitle", "Pilih hari & jam yang kamu available.")}
               />
 
               <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-wide text-ink-soft">
-                Hari
+                {t("setup.step4.dayLabel", "Hari")}
               </p>
               <div className="mb-4 flex flex-wrap gap-2">
                 {DAY_OPTIONS.map((d) => {
@@ -463,7 +487,7 @@ export default function SetupPage() {
                           on ? "text-white/90" : "text-ink-soft"
                         }`}
                       >
-                        {d.isToday ? "Ini" : d.dayName}
+                        {d.isToday ? t("setup.step4.todayShort", "Ini") : d.dayName}
                       </span>
                       <span className="font-display text-lg font-extrabold leading-none">
                         {d.dayNum}
@@ -481,7 +505,7 @@ export default function SetupPage() {
               </div>
 
               <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-wide text-ink-soft">
-                Jam
+                {t("setup.step4.timeLabel", "Jam")}
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {TIME_SLOT_CATALOG.map((slot) => {
@@ -528,15 +552,20 @@ export default function SetupPage() {
             <div className="pt-1">
               <Button
                 onClick={generate}
-                disabled={!canGenerate}
+                disabled={!canGenerate || generating}
                 className="w-full disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Wand2 className="h-5 w-5" />
-                Buat Link Undangan
+                {generating
+                  ? t("setup.generatingButton", "Membuat…")
+                  : t("setup.generateButton", "Buat Link Undangan")}
               </Button>
               {!canGenerate && (
                 <p className="mt-2 text-center text-xs font-semibold text-ink-soft">
-                  Lengkapi dulu: {missing.join(", ")}.
+                  {t("setup.missingPrefix", "Lengkapi dulu: {list}.").replace(
+                    "{list}",
+                    missing.join(", ")
+                  )}
                 </p>
               )}
             </div>
@@ -559,7 +588,7 @@ export default function SetupPage() {
                         iconClassName="h-3.5 w-3.5"
                       />
                       <span className="font-display text-sm font-extrabold text-ink">
-                        Link siap dibagikan!
+                        {t("setup.result.title", "Link siap dibagikan!")}
                       </span>
                     </div>
                     <div className="mb-3 truncate rounded-xl border border-white/70 bg-white/70 px-3 py-2 text-xs font-semibold text-ink-soft">
@@ -572,7 +601,9 @@ export default function SetupPage() {
                         ) : (
                           <Copy className="h-5 w-5" />
                         )}
-                        {copied ? "Tersalin!" : "Salin"}
+                        {copied
+                          ? t("setup.result.copied", "Tersalin!")
+                          : t("setup.result.copy", "Salin")}
                       </Button>
                       <Button
                         onClick={shareLink}
@@ -580,7 +611,7 @@ export default function SetupPage() {
                         className="flex-1"
                       >
                         <Share2 className="h-5 w-5 text-pink-500" />
-                        Bagikan
+                        {t("setup.result.share", "Bagikan")}
                       </Button>
                     </div>
                     <a
@@ -590,7 +621,7 @@ export default function SetupPage() {
                       className="mt-3 flex items-center justify-center gap-1.5 text-xs font-bold text-ink-soft underline-offset-4 hover:underline"
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
-                      Lihat pratinjau undangan
+                      {t("setup.result.preview", "Lihat pratinjau undangan")}
                     </a>
                   </Panel>
                 </motion.div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import StepOpening from "@/components/steps/StepOpening";
 import StepQuestion from "@/components/steps/StepQuestion";
@@ -9,7 +9,9 @@ import StepLocation from "@/components/steps/StepLocation";
 import StepDateTime from "@/components/steps/StepDateTime";
 import StepFinal from "@/components/steps/StepFinal";
 import HeartProgress from "@/components/HeartProgress";
+import { useContent } from "@/components/ContentProvider";
 import { decodeConfig, findLocation, resolveConfig } from "@/lib/dateConfig";
+import { fetchInvite, logInviteEvent } from "@/lib/invites";
 
 const STEPS = ["opening", "question", "activity", "location", "datetime", "final"];
 
@@ -20,13 +22,20 @@ const transition = {
   transition: { duration: 0.35, ease: "easeInOut" },
 };
 
-function readRawConfig() {
-  if (typeof window === "undefined") return null;
-  return decodeConfig(new URLSearchParams(window.location.search).get("d"));
+function readParams() {
+  if (typeof window === "undefined") return { d: null, i: null };
+  const p = new URLSearchParams(window.location.search);
+  return { d: p.get("d"), i: p.get("i") };
 }
 
 export default function Home() {
-  const config = useMemo(() => resolveConfig(readRawConfig()), []);
+  const { activities: catalog } = useContent();
+  const params = useMemo(() => readParams(), []);
+  const inviteId = params.i;
+
+  // Raw config: from ?d= (sync decode) or fetched from ?i= (async).
+  const [raw, setRaw] = useState(() => decodeConfig(params.d));
+  const config = useMemo(() => resolveConfig(raw, catalog), [raw, catalog]);
   const { name, activities, locationsByActivity, days, timeSlots } = config;
 
   const [step, setStep] = useState(0);
@@ -34,6 +43,33 @@ export default function Home() {
   const [locationId, setLocationId] = useState(null);
   const [date, setDate] = useState(null);
   const [time, setTime] = useState(null);
+
+  // Load + track the invite referenced by ?i=.
+  const openLogged = useRef(false);
+  const answerLogged = useRef(false);
+  useEffect(() => {
+    if (!inviteId) return;
+    let alive = true;
+    (async () => {
+      const invite = await fetchInvite(inviteId);
+      if (alive && invite) setRaw(invite.config);
+    })();
+    if (!openLogged.current) {
+      openLogged.current = true;
+      logInviteEvent(inviteId, "open");
+    }
+    return () => {
+      alive = false;
+    };
+  }, [inviteId]);
+
+  // Log the "answer" once the receiver reaches the final step.
+  useEffect(() => {
+    if (step === 5 && inviteId && !answerLogged.current) {
+      answerLogged.current = true;
+      logInviteEvent(inviteId, "answer", { activityId, locationId, date, time });
+    }
+  }, [step, inviteId, activityId, locationId, date, time]);
 
   const go = (n) => setStep(Math.max(0, Math.min(STEPS.length - 1, n)));
   const next = () => go(step + 1);

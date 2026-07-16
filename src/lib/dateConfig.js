@@ -225,15 +225,16 @@ function resolveLocations(list, keyPrefix) {
     });
 }
 
-export function resolveConfig(raw) {
+export function resolveConfig(raw, catalog = ACTIVITY_CATALOG) {
   const cfg = raw ?? {};
+  const lookup = (id) => catalog.find((a) => a.id === id) ?? null;
 
   const activityIds =
     Array.isArray(cfg.acts) && cfg.acts.length
-      ? cfg.acts.filter((id) => getActivity(id))
-      : ACTIVITY_CATALOG.map((a) => a.id);
+      ? cfg.acts.filter((id) => lookup(id))
+      : catalog.map((a) => a.id);
 
-  const activities = activityIds.map((id) => getActivity(id)).filter(Boolean);
+  const activities = activityIds.map((id) => lookup(id)).filter(Boolean);
 
   const rawLocs = cfg.locs ?? DEFAULT_LOCATIONS;
   const locationsByActivity = {};

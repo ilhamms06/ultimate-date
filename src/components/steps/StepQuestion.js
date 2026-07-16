@@ -8,16 +8,19 @@ import Button from "../Button";
 import { FloatingHearts, Sparkles } from "../Decor";
 import { HeartIcon } from "../icons";
 import { IconBadge } from "../GradientIcon";
+import { useContent } from "../ContentProvider";
+import Emphasis from "../Emphasis";
 
 const TOOLTIPS = [
-  { text: "Yakin nih?", icon: Frown },
-  { text: "Coba pikir lagi... please?", icon: HeartHandshake },
-  { text: "Jawaban salah terdeteksi", icon: ShieldAlert },
-  { text: "Hatiku agak retak nih", icon: HeartCrack },
-  { text: "Tombolnya menolak ditekan", icon: EyeOff },
+  { key: "question.tooltip.1", fallback: "Yakin nih?", icon: Frown },
+  { key: "question.tooltip.2", fallback: "Coba pikir lagi... please?", icon: HeartHandshake },
+  { key: "question.tooltip.3", fallback: "Jawaban salah terdeteksi", icon: ShieldAlert },
+  { key: "question.tooltip.4", fallback: "Hatiku agak retak nih", icon: HeartCrack },
+  { key: "question.tooltip.5", fallback: "Tombolnya menolak ditekan", icon: EyeOff },
 ];
 
 export default function StepQuestion({ onYes, name }) {
+  const { t } = useContent();
   const [dodges, setDodges] = useState(0);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [tooltip, setTooltip] = useState(null);
@@ -59,7 +62,7 @@ export default function StepQuestion({ onYes, name }) {
           >
             <Image
               src="/images/icon/rabbit-love.png"
-              alt="Kelinci lucu membawa hati"
+              alt={t("question.rabbitAlt", "Kelinci lucu membawa hati")}
               fill
               priority
               sizes="208px"
@@ -69,7 +72,7 @@ export default function StepQuestion({ onYes, name }) {
             <AnimatePresence>
               {tooltip && (
                 <motion.div
-                  key={tooltip.text + dodges}
+                  key={tooltip.key + dodges}
                   initial={{ opacity: 0, y: 10, scale: 0.8 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 6, scale: 0.85 }}
@@ -78,7 +81,7 @@ export default function StepQuestion({ onYes, name }) {
                 >
                   <div className="relative flex items-center gap-1.5 whitespace-nowrap rounded-2xl bg-white/95 px-3 py-1.5 text-sm font-bold text-pink-500 shadow-md">
                     <IconBadge icon={tooltip.icon} className="h-5 w-5" iconClassName="h-3 w-3" />
-                    {tooltip.text}
+                    {t(tooltip.key, tooltip.fallback)}
                     <span
                       aria-hidden="true"
                       className="absolute -bottom-1 left-7 h-3 w-3 rotate-45 rounded-[2px] bg-white/95"
@@ -97,15 +100,11 @@ export default function StepQuestion({ onYes, name }) {
           className="flex max-w-sm flex-col items-center text-center"
         >
           <h1 className="font-serif text-[1.85rem] font-semibold leading-tight tracking-tight text-ink sm:text-[2rem]">
-            Maukah {name || "kamu"} pergi{" "}
-            <motion.em
-              animate={{ scale: [1, 1.06, 1] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-              className="inline-block font-serif italic font-medium text-pink-500"
-            >
-              kencan
-            </motion.em>{" "}
-            denganku?
+            <Emphasis
+              text={t("question.title", "Maukah {name} pergi *kencan* denganku?")}
+              values={{ name: name || "kamu" }}
+              animate
+            />
           </h1>
 
           <motion.div
@@ -131,7 +130,7 @@ export default function StepQuestion({ onYes, name }) {
             transition={{ delay: 0.3 }}
             className="mt-2 text-sm font-semibold text-ink-soft"
           >
-            Cuma butuh satu jawaban kok, gampang kan?
+            {t("question.subtitle", "Cuma butuh satu jawaban kok, gampang kan?")}
           </motion.p>
         </motion.header>
       </div>
@@ -143,7 +142,7 @@ export default function StepQuestion({ onYes, name }) {
           className="w-full origin-center"
         >
           <Button onClick={onYes} className="w-full text-2xl tracking-wide">
-            YA
+            {t("question.yesButton", "YA")}
             <HeartIcon className="h-6 w-6" />
           </Button>
         </motion.div>
@@ -160,7 +159,7 @@ export default function StepQuestion({ onYes, name }) {
             whileTap={{ scale: 0.96 }}
             className="absolute left-1/2 top-1 flex min-h-[52px] w-[min(100%,220px)] -translate-x-1/2 items-center justify-center gap-2 rounded-full border-2 border-dashed border-pink-300 bg-white/40 px-7 font-display text-lg font-bold tracking-wide text-pink-500 backdrop-blur-md"
           >
-            TIDAK
+            {t("question.noButton", "TIDAK")}
             <HeartCrack className="h-5 w-5 text-pink-400" strokeWidth={2.4} aria-hidden="true" />
           </motion.button>
         </div>

@@ -1,5 +1,7 @@
 import { Nunito, Baloo_2, Playfair_Display } from "next/font/google";
 import { IconGradientDefs } from "@/components/GradientIcon";
+import { ContentProvider } from "@/components/ContentProvider";
+import { getServerAnonClient } from "@/lib/supabase/server";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -21,10 +23,29 @@ const playfair = Playfair_Display({
   style: ["normal", "italic"],
 });
 
-export const metadata = {
+const META_FALLBACK = {
   title: "Maukah Kamu Pergi Kencan Denganku?",
   description: "Undangan kecil yang manis, khusus untukmu",
 };
+
+export async function generateMetadata() {
+  const sb = getServerAnonClient();
+  if (!sb) return META_FALLBACK;
+  try {
+    const { data } = await sb
+      .from("content")
+      .select("key,value")
+      .in("key", ["meta.title", "meta.description"]);
+    const map = {};
+    (data ?? []).forEach((r) => (map[r.key] = r.value));
+    return {
+      title: map["meta.title"] || META_FALLBACK.title,
+      description: map["meta.description"] || META_FALLBACK.description,
+    };
+  } catch {
+    return META_FALLBACK;
+  }
+}
 
 export const viewport = {
   themeColor: "#ffb6d5",
@@ -40,7 +61,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full">
         <IconGradientDefs />
-        {children}
+        <ContentProvider>{children}</ContentProvider>
       </body>
     </html>
   );
