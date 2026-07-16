@@ -4,7 +4,9 @@
 FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+# npm install (bukan ci) agar tahan beda platform: lockfile mac vs build Linux.
+# Tetap deterministik karena lockfile ikut di-copy.
+RUN npm install --no-audit --no-fund
 
 # --- builder: build the Next.js app (standalone output) ---
 FROM node:24-alpine AS builder

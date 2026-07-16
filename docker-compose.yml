@@ -5,7 +5,8 @@ services:
     container_name: ultimate-date
     image: ghcr.io/ilhamms06/ultimate-date:latest
     ports:
-      - "3000:3000"
+      # host:container — akses via port 4002 di VPS, container tetap 3000 internal
+      - "4002:3000"
     environment:
       - NODE_ENV=production
       # Server-only (dibaca saat runtime oleh API routes)
