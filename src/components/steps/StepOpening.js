@@ -30,6 +30,22 @@ export default function StepOpening({ onNext, name }) {
       <FloatingHearts count={10} />
       <Sparkles count={8} />
 
+      <motion.div
+        initial={{ scale: 0.6, opacity: 0, y: -8 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 160, damping: 14 }}
+        className="absolute left-1/2 top-6 z-20 h-20 w-48 -translate-x-1/2"
+      >
+        <Image
+          src="/main-logo.png"
+          alt={t("opening.logoAlt", "Ultimate Date")}
+          fill
+          sizes="192px"
+          className="object-contain drop-shadow-[0_10px_16px_rgba(255,122,178,0.35)]"
+          priority
+        />
+      </motion.div>
+
       <div className="relative z-10 flex w-full max-w-xs flex-col items-center">
         <motion.div
           initial={{ scale: 0.5, opacity: 0, y: 10 }}
@@ -75,7 +91,7 @@ export default function StepOpening({ onNext, name }) {
                 values={{ name: name || "kamu" }}
                 emClassName="text-pink-500"
               />
-              <GradientIcon icon={Mail} className="h-7 w-7 shrink-0" />
+              {/* <GradientIcon icon={Mail} className="h-7 w-7 shrink-0" /> */}
             </h1>
             <p className="mt-2 font-display text-base font-extrabold text-ink">
               {t("opening.subtitle", "Ada yang penting yang mau aku tanyakan...")}

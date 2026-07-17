@@ -28,9 +28,15 @@ const META_FALLBACK = {
   description: "Undangan kecil yang manis, khusus untukmu",
 };
 
+const META_ICONS = {
+  icon: [{ url: "/main-logo.png", type: "image/png" }],
+  shortcut: ["/main-logo.png"],
+  apple: [{ url: "/main-logo.png" }],
+};
+
 export async function generateMetadata() {
   const sb = getServerAnonClient();
-  if (!sb) return META_FALLBACK;
+  if (!sb) return { ...META_FALLBACK, icons: META_ICONS };
   try {
     const { data } = await sb
       .from("content")
@@ -41,9 +47,10 @@ export async function generateMetadata() {
     return {
       title: map["meta.title"] || META_FALLBACK.title,
       description: map["meta.description"] || META_FALLBACK.description,
+      icons: META_ICONS,
     };
   } catch {
-    return META_FALLBACK;
+    return { ...META_FALLBACK, icons: META_ICONS };
   }
 }
 
