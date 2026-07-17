@@ -145,7 +145,7 @@ export default function StepQuestion({ onYes, name }) {
             transition={{ delay: 0.3 }}
             className="mt-2 text-sm font-semibold text-ink-soft"
           >
-            {t("question.subtitle", "Cuma butuh satu jawaban kok, gampang kan?")}
+            {t("question.subtitle", "Satu jawaban aja, kok.")}
           </motion.p>
         </motion.header>
       </div>

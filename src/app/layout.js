@@ -24,8 +24,8 @@ const playfair = Playfair_Display({
 });
 
 const META_FALLBACK = {
-  title: "Maukah Kamu Pergi Kencan Denganku?",
-  description: "Undangan kecil yang manis, khusus untukmu",
+  title: "Maukah Kamu Kencan Denganku?",
+  description: "Undangan kecil yang manis, khusus buat kamu",
 };
 
 const META_ICONS = {

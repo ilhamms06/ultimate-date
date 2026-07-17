@@ -87,14 +87,14 @@ export default function StepOpening({ onNext, name }) {
           <div className="relative px-6">
             <h1 className="flex flex-wrap items-center justify-center gap-x-2 font-display text-[1.9rem] font-extrabold leading-tight text-ink">
               <Emphasis
-                text={t("opening.greeting", "Hei *{name}!*")}
+                text={t("opening.greeting", "Hai, *{name}!*")}
                 values={{ name: name || "kamu" }}
                 emClassName="text-pink-500"
               />
               {/* <GradientIcon icon={Mail} className="h-7 w-7 shrink-0" /> */}
             </h1>
             <p className="mt-2 font-display text-base font-extrabold text-ink">
-              {t("opening.subtitle", "Ada yang penting yang mau aku tanyakan...")}
+              {t("opening.subtitle", "Ada sesuatu yang mau aku tanyakan...")}
             </p>
 
             <div
@@ -107,7 +107,7 @@ export default function StepOpening({ onNext, name }) {
             </div>
 
             <p className="flex items-center justify-center gap-1.5 text-sm font-semibold text-ink-soft">
-              {t("opening.promise", "Janji jangan pergi sebelum menjawab ya")}
+              {t("opening.promise", "Jangan pergi dulu sebelum jawab, ya")}
               <GradientIcon icon={HeartHandshake} className="h-4 w-4 shrink-0" />
             </p>
           </div>

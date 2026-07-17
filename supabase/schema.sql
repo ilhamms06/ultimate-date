@@ -100,34 +100,36 @@ on conflict (id) do nothing;
 -- isn't editable from the admin. To expose more, add its key + text here.
 -- Titles may use *word* to italic-emphasise a word, and {name} for the receiver.
 insert into public.content (key, value) values
-  ('meta.title',          'Maukah Kamu Pergi Kencan Denganku?'),
-  ('meta.description',    'Undangan kecil yang manis, khusus untukmu'),
+  ('meta.title',          'Maukah Kamu Kencan Denganku?'),
+  ('meta.description',    'Undangan kecil yang manis, khusus buat kamu'),
 
-  ('opening.greeting',    'Hei *{name}!*'),
-  ('opening.subtitle',    'Ada yang penting yang mau aku tanyakan...'),
-  ('opening.promise',     'Janji jangan pergi sebelum menjawab ya'),
+  ('opening.greeting',    'Hai, *{name}!*'),
+  ('opening.subtitle',    'Ada sesuatu yang mau aku tanyakan...'),
+  ('opening.promise',     'Jangan pergi dulu sebelum jawab, ya'),
   ('opening.ctaButton',   'Buka Pertanyaannya'),
 
   ('question.title',      'Maukah {name} pergi *kencan* denganku?'),
-  ('question.subtitle',   'Cuma butuh satu jawaban kok, gampang kan?'),
+  ('question.subtitle',   'Satu jawaban aja, kok.'),
   ('question.yesButton',  'YA'),
   ('question.noButton',   'TIDAK'),
 
   ('activity.title',      'Kencan seperti apa yang *seru*?'),
-  ('activity.subtitle',   'Pilih suasana yang cocok dengan mood-mu dan mari buat tak terlupakan!'),
+  ('activity.subtitle',   'Pilih yang paling pas sama mood kamu.'),
   ('activity.nextButton', 'Lanjut'),
 
   ('location.title',      'Mau *ke mana* kita?'),
-  ('location.subtitle',   'Pilih tempat untuk mulai kencan kita'),
-  ('location.nextButton', 'Jadi Kencan!'),
+  ('location.subtitle',   'Pilih tempat buat kencan kita.'),
+  ('location.nextButton', 'Lanjut'),
 
   ('datetime.title',      'Kapan kita *ketemu*?'),
-  ('datetime.subtitle',   'Pilih hari, lalu waktunya.'),
+  ('datetime.subtitle',   'Pilih hari, lalu jamnya.'),
   ('datetime.nextButton', 'Jadi Kencan!'),
 
-  ('final.title',         'Yeay, kita *fix* kencan!'),
-  ('final.subtitle',      'Tinggal cus pas harinya, gak usah ribet mikir.'),
-  ('final.saveButton',    'Catet di Kalender'),
+  ('final.title',         'Yeay, kita *jadi* kencan!'),
+  ('final.subtitle',      'Tinggal datang pas harinya, sisanya udah beres.'),
+  ('final.saveButton',    'Simpan ke Kalender'),
+  ('final.sendButton',    'Kirim ke Dia'),
+  ('final.shareIntro',    'Aku udah pilih kencan kita! 💕'),
 
   ('setup.title',         'Bikin undangan *kencan*'),
   ('setup.subtitle',      'Atur pilihannya, lalu kirim link ke dia.')

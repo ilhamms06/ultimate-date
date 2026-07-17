@@ -259,7 +259,7 @@ export default function StepDateTime({
           transition={{ delay: 0.3 }}
           className="text-sm font-semibold text-ink-soft"
         >
-          {t("datetime.subtitle", "Pilih hari, lalu waktunya.")}
+          {t("datetime.subtitle", "Pilih hari, lalu jamnya.")}
         </motion.p>
       </motion.header>
 

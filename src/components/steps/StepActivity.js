@@ -37,10 +37,7 @@ export default function StepActivity({
           </span>
         </h1>
         <p className="mx-auto mt-2 max-w-[18rem] text-sm font-semibold leading-snug text-ink-soft">
-          {t(
-            "activity.subtitle",
-            "Pilih suasana yang cocok dengan mood-mu dan mari buat tak terlupakan!"
-          )}
+          {t("activity.subtitle", "Pilih yang paling pas sama mood kamu.")}
         </p>
         <div className="mt-3 flex items-center justify-center gap-2.5" aria-hidden="true">
           <span className="h-px w-10 bg-pink-300/80" />

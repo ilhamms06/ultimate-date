@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { PartyPopper, Building2, CalendarHeart } from "lucide-react";
+import { PartyPopper, Building2, CalendarHeart, Send } from "lucide-react";
 import Button from "../Button";
 import { Confetti, Sparkles, FloatingHearts } from "../Decor";
 import { SaveIcon, PinIcon, UtensilsIcon, ClockIcon, HeartIcon } from "../icons";
@@ -133,6 +133,20 @@ export default function StepFinal({ activity, location, date, time, onRestart })
       ? `${dateLabel}${dateLabel && time ? " • " : ""}${time ?? ""}`
       : "—";
 
+  function handleSend() {
+    const activityLabel = activity?.label ?? "-";
+    const locationLabel = location?.placeName ?? location?.label ?? "-";
+    const message = [
+      t("final.shareIntro", "Aku udah pilih kencan kita! 💕"),
+      "",
+      `${t("final.rowActivity", "Aktivitas")}: ${activityLabel}`,
+      `${t("final.rowLocation", "Lokasi")}: ${locationLabel}`,
+      `${t("final.rowTime", "Waktu")}: ${whenValue}`,
+    ].join("\n");
+    const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
   const ActivityIcon = activity?.Icon;
   const activityValue = activity ? (
     <span className="inline-flex items-center gap-1.5">
@@ -165,7 +179,7 @@ export default function StepFinal({ activity, location, date, time, onRestart })
         className="relative z-10 text-center mt-24"
       >
         <h1 className="font-serif text-[1.85rem] font-semibold leading-tight tracking-tight text-ink">
-          <Emphasis text={t("final.title", "Yeay, kita *fix* kencan!")} animate />
+          <Emphasis text={t("final.title", "Yeay, kita *jadi* kencan!")} animate />
         </h1>
 
         <motion.div
@@ -191,7 +205,7 @@ export default function StepFinal({ activity, location, date, time, onRestart })
           transition={{ delay: 0.3 }}
           className="text-sm font-semibold text-ink-soft"
         >
-          {t("final.subtitle", "Tinggal cus pas harinya, gak usah ribet mikir.")}
+          {t("final.subtitle", "Tinggal datang pas harinya, sisanya udah beres.")}
         </motion.p>
       </motion.header>
 
@@ -246,9 +260,13 @@ export default function StepFinal({ activity, location, date, time, onRestart })
       </motion.div>
 
       <div className="relative z-10 mt-auto w-full max-w-sm space-y-2">
-        <Button onClick={handleSave} className="w-full">
-          <SaveIcon className="h-5 w-5" />
-          {t("final.saveButton", "Catet di Kalender")}
+        <Button onClick={handleSend} className="w-full">
+          <Send className="h-5 w-5" />
+          {t("final.sendButton", "Kirim ke Dia")}
+        </Button>
+        <Button onClick={handleSave} variant="secondary" className="w-full">
+          <SaveIcon className="h-5 w-5 text-pink-500" />
+          {t("final.saveButton", "Simpan ke Kalender")}
         </Button>
         <button
           onClick={onRestart}

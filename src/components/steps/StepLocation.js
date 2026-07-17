@@ -212,7 +212,7 @@ export default function StepLocation({ locations = [], selected, onSelect, onNex
           transition={{ delay: 0.3 }}
           className="text-sm font-semibold text-ink-soft"
         >
-          {t("location.subtitle", "Pilih tempat untuk mulai kencan kita")}
+          {t("location.subtitle", "Pilih tempat buat kencan kita.")}
         </motion.p>
       </motion.header>
 
@@ -249,7 +249,7 @@ export default function StepLocation({ locations = [], selected, onSelect, onNex
           disabled={!selected}
           className="w-full disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {t("location.nextButton", "Jadi Kencan!")}
+          {t("location.nextButton", "Lanjut")}
           <ArrowRightIcon className="h-5 w-5" />
         </Button>
       </div>
