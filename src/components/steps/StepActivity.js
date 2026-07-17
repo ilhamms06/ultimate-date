@@ -50,11 +50,14 @@ export default function StepActivity({
       </header>
 
       <div className="relative z-10 min-h-0 flex-1 overflow-y-auto scrollbar-none">
-        <div className="grid grid-cols-2 content-start gap-3 px-2.5 pb-3 pt-2.5">
+        <div className="grid grid-cols-2 content-start gap-4 px-4 pb-5 pt-5">
           {activities.map((a, i) => {
           const isActive = selected === a.id;
           return (
-            <div key={a.id} className="relative overflow-visible">
+            <div
+              key={a.id}
+              className={`relative overflow-visible ${isActive ? "z-20" : "z-0"}`}
+            >
               {isActive && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.85 }}
